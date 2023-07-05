@@ -46,9 +46,8 @@ class Lit4dVarNet(pl.LightningModule):
         return self.solver(batch)
     
     def step(self, batch, phase=""):
-        if self.training and batch.tgt.isfinite().float().mean() < 0.9:
-            return None, None
-
+        #if self.training and batch.tgt.isfinite().float().mean() < 0.9:
+        #    return None, None
         loss, out = self.base_step(batch, phase)
         grad_loss = self.weighted_mse( kfilts.sobel(out) - kfilts.sobel(batch.tgt), self.rec_weight)
         prior_cost = self.solver.prior_cost(self.solver.init_state(batch, out))
@@ -93,14 +92,12 @@ class Lit4dVarNet(pl.LightningModule):
         rec_da = self.trainer.test_dataloaders.dataset.reconstruct(
             self.test_data, self.rec_weight.cpu().numpy()
         )
-
         if isinstance(rec_da, list):
             rec_da = rec_da[0]
 
         self.test_data = rec_da.assign_coords(
             dict(v0=self.test_quantities)
         ).to_dataset(dim='v0')
-
         metric_data = self.test_data.pipe(self.pre_metric_fn)
         metrics = pd.Series({
             metric_n: metric_fn(metric_data) 
@@ -115,7 +112,7 @@ class Lit4dVarNet(pl.LightningModule):
 
 
 class GradSolver(nn.Module):
-    def __init__(self, prior_cost, obs_cost, grad_mod, n_step, lr_grad=0.2, **kwargs):
+    def __init__(self, prior_cost, obs_cost, grad_mod, n_step, lr_grad=0.2, post_proj=False, **kwargs):
         super().__init__()
         self.prior_cost = prior_cost
         self.obs_cost = obs_cost
@@ -123,7 +120,7 @@ class GradSolver(nn.Module):
 
         self.n_step = n_step
         self.lr_grad = lr_grad
-
+        self.post_proj = post_proj
         self._grad_norm = None
 
     def init_state(self, batch, x_init=None):
@@ -156,7 +153,8 @@ class GradSolver(nn.Module):
                     state = state.detach().requires_grad_(True)
 
             if not self.training:
-                state = self.prior_cost.forward_ae(state)
+                if self.post_proj:
+                    state = self.prior_cost.forward_ae(state)
         return state
 
 

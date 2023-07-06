@@ -6,7 +6,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-
 class Lit4dVarNet(pl.LightningModule):
     def __init__(self, solver, rec_weight, opt_fn, test_metrics=None, pre_metric_fn=None, norm_stats=None, persist_rw=True):
         super().__init__()
@@ -84,6 +83,7 @@ class Lit4dVarNet(pl.LightningModule):
             dim=1,
         ))
 
+
     @property
     def test_quantities(self):
         return ['inp', 'tgt', 'out']
@@ -92,6 +92,7 @@ class Lit4dVarNet(pl.LightningModule):
         rec_da = self.trainer.test_dataloaders.dataset.reconstruct(
             self.test_data, self.rec_weight.cpu().numpy()
         )
+
         if isinstance(rec_da, list):
             rec_da = rec_da[0]
 

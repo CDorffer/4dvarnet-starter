@@ -41,7 +41,7 @@ datamodule:
     patch_dims: { time: 15, lat: 240, lon: 240}
     strides: { time: 1, lat: 240, lon: 240}
   dl_kw: {batch_size: 4, num_workers: 1}
-  aug_factor: 1
+  aug_factor: 0
   aug_only: True
 
 model:
@@ -55,6 +55,7 @@ model:
       _target_: src.utils.get_triang_time_wei
       patch_dims: ${datamodule.xrds_kw.patch_dims}
       crop: {time: 0, lat: 0, lon: 0}
+      offset: 1
   solver: 
     _target_: src.models.GradSolver
     post_proj: false

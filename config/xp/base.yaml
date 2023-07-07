@@ -70,7 +70,7 @@ model:
     grad_mod: 
       _target_: src.models.ConvLstmGradModel
       dim_in: ${datamodule.xrds_kw.patch_dims.time}
-      dim_hidden: 48
+      dim_hidden: 150
 
 
 entrypoints:

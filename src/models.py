@@ -280,7 +280,7 @@ class BilinAEPriorCost(nn.Module):
 ### ToDo ! ! !
 class BilinAEPriorCost_Core(nn.Module):
     def __init__(self, dim_in, dim_hidden, kernel_size=3, inner_kernel_size=1, downsamp=None, bilin_quad=True):
-        super(BiLinUnit, self).__init__()
+        super().__init__()
         self.conv1 = torch.nn.Conv2d(dim_in, 2 * dim_hidden, (2 * kernel_size + 1, 2 * kernel_size + 1), padding=kernel_size, bias=False)
         self.conv2 = torch.nn.Conv2d(2 * dim_hidden, dim_hidden, (2 * inner_kernel_size + 1, 2 * inner_kernel_size + 1), padding=inner_kernel_size, bias=False)
         self.conv3 = torch.nn.Conv2d(2 * dim_hidden, dim_in, (2 * inner_kernel_size + 1, 2 * inner_kernel_size + 1), padding=inner_kernel_size, bias=False)

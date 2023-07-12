@@ -32,7 +32,7 @@ datamodule:
     path2: ${paths.patch}
   domains:
     train:
-      time: {_target_: builtins.slice, _args_: ['2019-01-01', '2019-31-12']}
+      time: {_target_: builtins.slice, _args_: ['2019-01-01', '2019-12-31']}
     val: 
       time: {_target_: builtins.slice, _args_: ['2020-01-01', '2020-06-31']}
     test: 

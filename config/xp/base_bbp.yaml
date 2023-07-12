@@ -34,7 +34,7 @@ datamodule:
     train:
       time: {_target_: builtins.slice, _args_: ['2019-01-01', '2019-12-31']}
     val: 
-      time: {_target_: builtins.slice, _args_: ['2020-01-01', '2020-06-31']}
+      time: {_target_: builtins.slice, _args_: ['2020-01-01', '2020-06-30']}
     test: 
       time: {_target_: builtins.slice,  _args_: ['2021-01-01', '2021-12-31']}
   xrds_kw:

@@ -113,7 +113,7 @@ class Lit4dVarNet(pl.LightningModule):
 
 
 class GradSolver(nn.Module):
-    def __init__(self, prior_cost, obs_cost, grad_mod, n_step, lr_grad=0.2, post_proj=False, **kwargs):
+    def __init__(self, prior_cost, obs_cost, grad_mod, n_step, lr_grad=0.2, post_proj=False, lambda_obs = 1, lambda_prior = 1, **kwargs):
         super().__init__()
         self.prior_cost = prior_cost
         self.obs_cost = obs_cost
@@ -123,6 +123,9 @@ class GradSolver(nn.Module):
         self.lr_grad = lr_grad
         self.post_proj = post_proj
         self._grad_norm = None
+        
+        self.alphaObs = torch.nn.Parameter(torch.Tensor(1.))
+        self.alphaReg = torch.nn.Parameter(torch.Tensor(1.))
 
     def init_state(self, batch, x_init=None):
         if x_init is not None:
@@ -131,7 +134,7 @@ class GradSolver(nn.Module):
         return batch.input.nan_to_num().detach().requires_grad_(True)
 
     def solver_step(self, state, batch, step):
-        var_cost = self.prior_cost(state) + self.obs_cost(state, batch)
+        var_cost = self.alphaReg*self.prior_cost(state) + self.alphaObs*self.obs_cost(state, batch)
         grad = torch.autograd.grad(var_cost, state, create_graph=True)[0]
 
         gmod = self.grad_mod(grad)
@@ -268,6 +271,30 @@ class BilinAEPriorCost(nn.Module):
             torch.cat([self.bilin_1(x), nonlin], dim=1)
         )
         x = self.up(x)
+        return x
+
+    def forward(self, state):
+        return F.mse_loss(state, self.forward_ae(state))
+       
+class BilinAEPriorCost_Core(nn.Module):
+    def __init__(self, dim_in, dim_hidden, kernel_size=3, inner_kernel_size=1, downsamp=None, bilin_quad=True):
+        super(BiLinUnit, self).__init__()
+        self.conv1 = torch.nn.Conv2d(dim_in, 2 * dim_hidden, (2 * kernel_size + 1, 2 * kernel_size + 1), padding=kernel_size, bias=False)
+        self.conv2 = torch.nn.Conv2d(2 * dim_hidden, dim_hidden, (2 * inner_kernel_size + 1, 2 * inner_kernel_size + 1), padding=inner_kernel_size, bias=False)
+        self.conv3 = torch.nn.Conv2d(2 * dim_hidden, dim_in, (2 * inner_kernel_size + 1, 2 * inner_kernel_size + 1), padding=inner_kernel_size, bias=False)
+        self.bilin0 = torch.nn.Conv2d(dim_hidden, dim_hidden, (2 * inner_kernel_size + 1, 2 * inner_kernel_size + 1), padding=inner_kernel_size, bias=False)
+        self.bilin1 = torch.nn.Conv2d(dim_hidden, dim_hidden, (2 * inner_kernel_size + 1, 2 * inner_kernel_size + 1), padding=inner_kernel_size, bias=False)
+        self.bilin2 = torch.nn.Conv2d(dim_hidden, dim_hidden, (2 * inner_kernel_size + 1, 2 * inner_kernel_size + 1), padding=inner_kernel_size, bias=False)
+        self.dropout = torch.nn.Dropout(dropout)
+
+    def forward_ae(self, xin):
+        x = self.conv1(xin)
+        x = self.dropout(x)
+        x = self.conv2(F.relu(x))
+        x = self.dropout(x)
+        x = torch.cat((self.bilin0(x), self.bilin1(x) * self.bilin2(x)), dim=1)
+        x = self.dropout(x)
+        x = self.conv3(x)
         return x
 
     def forward(self, state):

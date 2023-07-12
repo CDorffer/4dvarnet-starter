@@ -71,7 +71,7 @@ model:
       _target_: src.models.ConvLstmGradModel
       dim_in: ${datamodule.xrds_kw.patch_dims.time}
       dim_hidden: 150
-
+      droupout: .25
 
 entrypoints:
   - _target_: pytorch_lightning.seed_everything

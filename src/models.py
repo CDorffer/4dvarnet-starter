@@ -124,8 +124,8 @@ class GradSolver(nn.Module):
         self.post_proj = post_proj
         self._grad_norm = None
         
-        self.alphaObs = torch.nn.Parameter(torch.Tensor(1.))
-        self.alphaReg = torch.nn.Parameter(torch.Tensor(1.))
+        # ~ self.alphaObs = torch.nn.Parameter(torch.Tensor(1.))
+        # ~ self.alphaReg = torch.nn.Parameter(torch.Tensor(1.))
 
     def init_state(self, batch, x_init=None):
         if x_init is not None:
@@ -134,7 +134,8 @@ class GradSolver(nn.Module):
         return batch.input.nan_to_num().detach().requires_grad_(True)
 
     def solver_step(self, state, batch, step):
-        var_cost = self.alphaReg*self.prior_cost(state) + self.alphaObs*self.obs_cost(state, batch)
+        # ~ var_cost = self.alphaReg*self.prior_cost(state) + self.alphaObs*self.obs_cost(state, batch)
+        var_cost = self.prior_cost(state) + self.obs_cost(state, batch)
         grad = torch.autograd.grad(var_cost, state, create_graph=True)[0]
 
         gmod = self.grad_mod(grad)
@@ -276,6 +277,7 @@ class BilinAEPriorCost(nn.Module):
     def forward(self, state):
         return F.mse_loss(state, self.forward_ae(state))
        
+### ToDo ! ! !
 class BilinAEPriorCost_Core(nn.Module):
     def __init__(self, dim_in, dim_hidden, kernel_size=3, inner_kernel_size=1, downsamp=None, bilin_quad=True):
         super(BiLinUnit, self).__init__()

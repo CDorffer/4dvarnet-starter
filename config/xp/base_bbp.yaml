@@ -65,7 +65,6 @@ model:
       _target_: src.models.BilinAEPriorCost
       dim_in: ${datamodule.xrds_kw.patch_dims.time}
       dim_hidden: 100
-      #~ _target_: src.models.BilinAEPriorCost_Core
     obs_cost: 
       _target_: src.models.BaseObsCost
     grad_mod: 

@@ -118,7 +118,10 @@ class GradSolver(nn.Module):
         self.prior_cost = prior_cost
         self.obs_cost = obs_cost
         self.grad_mod = grad_mod
-        self.alpha = get_alpha
+        # ~ self.alpha = get_alpha
+        
+        self.alphaReg = torch.nn.Parameter(torch.Tensor(1.))
+        self.alphaObs = torch.nn.Parameter(torch.Tensor(1.))
 
         self.n_step = n_step
         self.lr_grad = lr_grad
@@ -133,9 +136,7 @@ class GradSolver(nn.Module):
         return batch.input.nan_to_num().detach().requires_grad_(True)
 
     def solver_step(self, state, batch, step):
-        alphaObs, alphaReg = self.alpha()
-        var_cost = alphaReg**2*self.prior_cost(state) + alphaObs**2*self.obs_cost(state, batch)
-        # ~ var_cost = self.prior_cost(state) + self.obs_cost(state, batch)
+        var_cost = self.alphaReg**2*self.prior_cost(state) + self.alphaObs**2*self.obs_cost(state, batch)
         grad = torch.autograd.grad(var_cost, state, create_graph=True)[0]
 
         gmod = self.grad_mod(grad)
@@ -162,13 +163,13 @@ class GradSolver(nn.Module):
                     state = self.prior_cost.forward_ae(state)
         return state
 
-class get_alpha(nn.Module):
-    def __init__(self):
-        self.alphaReg = torch.nn.Parameter(torch.Tensor(1.))
-        self.alphaObs = torch.nn.Parameter(torch.Tensor(1.))
+# ~ class get_alpha(nn.Module):
+    # ~ def __init__(self):
+        # ~ self.alphaReg = torch.nn.Parameter(torch.Tensor(1.))
+        # ~ self.alphaObs = torch.nn.Parameter(torch.Tensor(1.))
         
-    def forward(self):
-        return self.alphaObs, self.alphaReg
+    # ~ def forward(self):
+        # ~ return self.alphaObs, self.alphaReg
 
 class ConvLstmGradModel(nn.Module):
     def __init__(self, dim_in, dim_hidden, kernel_size=3, dropout=0.1, downsamp=None):

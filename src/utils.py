@@ -57,8 +57,8 @@ def cosanneal_lr_adam_VarCost(lit_mod, lr, T_max=100, weight_decay=0.):
             {"params": lit_mod.solver.grad_mod.parameters(), "lr": lr},
             {"params": lit_mod.solver.obs_cost.parameters(), "lr": lr},
             {"params": lit_mod.solver.prior_cost.parameters(), "lr": lr / 2},
-            {"params": lit_mod.solver.alphaReg.parameters(), "lr": lr / 2},
-            {"params": lit_mod.solver.alphaObs.parameters(), "lr": lr / 2},
+            {"params": lit_mod.solver.alphaReg, "lr": lr / 2},
+            {"params": lit_mod.solver.alphaObs, "lr": lr / 2},
         ], weight_decay=weight_decay
     )
     return {

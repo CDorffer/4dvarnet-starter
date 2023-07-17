@@ -118,14 +118,13 @@ class GradSolver(nn.Module):
         self.prior_cost = prior_cost
         self.obs_cost = obs_cost
         self.grad_mod = grad_mod
+        self.alpha = get_alpha
 
         self.n_step = n_step
         self.lr_grad = lr_grad
         self.post_proj = post_proj
         self._grad_norm = None
         
-        # ~ self.alphaObs = torch.nn.Parameter(torch.Tensor(1.))
-        # ~ self.alphaReg = torch.nn.Parameter(torch.Tensor(1.))
 
     def init_state(self, batch, x_init=None):
         if x_init is not None:
@@ -134,7 +133,8 @@ class GradSolver(nn.Module):
         return batch.input.nan_to_num().detach().requires_grad_(True)
 
     def solver_step(self, state, batch, step):
-        # ~ var_cost = self.alphaReg*self.prior_cost(state) + self.alphaObs*self.obs_cost(state, batch)
+        alphaObs, alphaReg = self.alpha()
+        var_cost = alphaReg*self.prior_cost(state) + alphaObs*self.obs_cost(state, batch)
         var_cost = self.prior_cost(state) + self.obs_cost(state, batch)
         grad = torch.autograd.grad(var_cost, state, create_graph=True)[0]
 
@@ -162,6 +162,13 @@ class GradSolver(nn.Module):
                     state = self.prior_cost.forward_ae(state)
         return state
 
+class get_alpha(nn.Module):
+    def __init__(self):
+        alphaReg = torch.nn.Parameter(torch.Tensor(1.))
+        alphaObs = torch.nn.Parameter(torch.Tensor(1.))
+        
+    def forward(self):
+        return alphaObs, alphaReg
 
 class ConvLstmGradModel(nn.Module):
     def __init__(self, dim_in, dim_hidden, kernel_size=3, dropout=0.1, downsamp=None):
@@ -277,7 +284,6 @@ class BilinAEPriorCost(nn.Module):
     def forward(self, state):
         return F.mse_loss(state, self.forward_ae(state))
        
-### ToDo ! ! !
 class BilinAEPriorCost_Core(nn.Module):
     def __init__(self, dim_in, dim_hidden, kernel_size=3, inner_kernel_size=1, dropout=0., downsamp=None, bilin_quad=True):
         super().__init__()

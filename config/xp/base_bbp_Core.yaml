@@ -47,7 +47,7 @@ datamodule:
 model:
   _target_: src.models.Lit4dVarNet
   opt_fn:
-    _target_: src.utils.cosanneal_lr_adam
+    _target_: src.utils.cosanneal_lr_adam_VarCost
     _partial_: true
     lr: 1e-3
     T_max: 175

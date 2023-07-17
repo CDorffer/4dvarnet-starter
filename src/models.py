@@ -118,7 +118,7 @@ class GradSolver(nn.Module):
         self.prior_cost = prior_cost
         self.obs_cost = obs_cost
         self.grad_mod = grad_mod
-        self.alpha = get_alpha
+        self.alpha = get_alpha()
 
         self.n_step = n_step
         self.lr_grad = lr_grad

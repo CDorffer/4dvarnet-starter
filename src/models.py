@@ -164,11 +164,11 @@ class GradSolver(nn.Module):
 
 class get_alpha(nn.Module):
     def __init__(self):
-        alphaReg = torch.nn.Parameter(torch.Tensor(1.))
-        alphaObs = torch.nn.Parameter(torch.Tensor(1.))
+        self.alphaReg = torch.nn.Parameter(torch.Tensor(1.))
+        self.alphaObs = torch.nn.Parameter(torch.Tensor(1.))
         
     def forward(self):
-        return alphaObs, alphaReg
+        return self.alphaObs, self.alphaReg
 
 class ConvLstmGradModel(nn.Module):
     def __init__(self, dim_in, dim_hidden, kernel_size=3, dropout=0.1, downsamp=None):

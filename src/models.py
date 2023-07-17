@@ -120,8 +120,8 @@ class GradSolver(nn.Module):
         self.grad_mod = grad_mod
         # ~ self.alpha = get_alpha
         
-        self.alphaReg = torch.nn.Parameter(torch.Tensor(1.))
-        self.alphaObs = torch.nn.Parameter(torch.Tensor(1.))
+        self.alphaReg = torch.nn.Parameter(torch.Tensor([1.]))
+        self.alphaObs = torch.nn.Parameter(torch.Tensor([1.]))
 
         self.n_step = n_step
         self.lr_grad = lr_grad

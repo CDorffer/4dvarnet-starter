@@ -167,7 +167,7 @@ class get_alpha(nn.Module):
         self.alphaReg = torch.nn.Parameter(torch.Tensor(1.))
         self.alphaObs = torch.nn.Parameter(torch.Tensor(1.))
         
-    def forward(self):
+    def forward():
         return self.alphaObs, self.alphaReg
 
 class ConvLstmGradModel(nn.Module):

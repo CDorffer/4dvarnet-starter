@@ -1,8 +1,8 @@
 # @package _global_
 
 paths:
-    GT: /DATASET/turbidity_bbp/GT_FrMedCoast_log10_2007to2021.nc
-    patch: /DATASET/turbidity_bbp/Obs_patch50_FrMedCoast_log10_2007to2021.nc
+    GT: /DATASET/turbidity_new/bbp/GT_2010to2021_log10.nc
+    patch: /DATASET/turbidity_new/bbp/Obs_patch_2010to2021_log10.nc
 
 trainer:
   _target_: pytorch_lightning.Trainer

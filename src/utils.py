@@ -184,7 +184,7 @@ def load_bbp_data (path1,path2):
         merg
         .load()
         .assign(
-            input=lambda ds: ds.bbp443,
+            input=lambda ds: ds.BBP443,
             tgt=lambda ds: ds.GT,
         )[[*src.data.TrainingItem._fields]]
         .transpose("time", "lat", "lon")

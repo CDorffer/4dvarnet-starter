@@ -240,6 +240,17 @@ class BaseDataModule(pl.LightningDataModule):
             lambda item: item._replace(input=normalize(item.input)),
         ])
 
+    # ~ def post_fn_rand(self):
+        # ~ m, s = self.norm_stats()
+        # ~ normalize = lambda item: (item - m) / s
+        # ~ return ft.partial(ft.reduce,lambda i, f: f(i), [
+            # ~ TrainingItem._make,
+            # ~ lambda item: item._replace(tgt=normalize(item.tgt)),
+            # ~ lambda item: item._replace(input=self.rand_obs(normalize(item.input))),
+        # ~ ])
+        
+    # ~ def rand_obs(self, gt_item):
+        # ~ ###### ToDo
 
     def setup(self, stage='test'):
         train_data = self.input_da.sel(self.domains['train'])

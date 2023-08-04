@@ -178,7 +178,39 @@ def load_altimetry_data(path, obs_from_tgt=False):
 def load_bbp_data (path1,path2):
     GT=xr.open_dataset(path1)
     patch=xr.open_dataset(path2)
-    GT = GT.rename({'bbp443': 'GT'})
+    GT = GT.rename({'BBP443': 'GT'})
+    merg=xr.merge([GT,patch])
+    return (
+        merg
+        .load()
+        .assign(
+            input=lambda ds: ds.bbp443,
+            tgt=lambda ds: ds.GT,
+        )[[*src.data.TrainingItem._fields]]
+        .transpose("time", "lat", "lon")
+        .to_array()
+    )
+    
+def load_kd_data (path1,path2):
+    GT=xr.open_dataset(path1)
+    patch=xr.open_dataset(path2)
+    GT = GT.rename({'KD490': 'GT'})
+    merg=xr.merge([GT,patch])
+    return (
+        merg
+        .load()
+        .assign(
+            input=lambda ds: ds.bbp443,
+            tgt=lambda ds: ds.GT,
+        )[[*src.data.TrainingItem._fields]]
+        .transpose("time", "lat", "lon")
+        .to_array()
+    )
+    
+def load_spm_data (path1,path2):
+    GT=xr.open_dataset(path1)
+    patch=xr.open_dataset(path2)
+    GT = GT.rename({'SPM': 'GT'})
     merg=xr.merge([GT,patch])
     return (
         merg

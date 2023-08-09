@@ -15,6 +15,10 @@ OmegaConf.register_new_resolver(
     "singleton", lambda k: "${oc.create:${_singleton:" + k + "}}", replace=True
 )
 
+OmegaConf.register_new_resolver("adjust_testslices", lambda x,y:
+        [str((pd.to_datetime(x[0]) - pd.to_timedelta(f'{int(y)//2}D')).date()),
+         str((pd.to_datetime(x[1]) + pd.to_timedelta(f'{1+int(y)//2}D')).date())],
+        replace=True)
 
 class SingletonStore:
     STORE = dict()

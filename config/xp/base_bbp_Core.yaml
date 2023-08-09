@@ -36,7 +36,7 @@ datamodule:
     val: 
       time: {_target_: builtins.slice, _args_: ['2020-01-01', '2020-12-31']}
     test: 
-      time: {_target_: builtins.slice,  _args_: ['2021-01-01', '2021-12-31']}
+      time: {_target_: builtins.slice,  _args_: ${adjust_testslices:['2020-01-01', '2020-12-31'],7}}
   xrds_kw:
     patch_dims: { time: 7, lat: 240, lon: 240}
     strides: { time: 1, lat: 240, lon: 240}
@@ -80,8 +80,12 @@ entrypoints:
     trainer: ${trainer}
     lit_mod: ${model}
     dm: ${datamodule}
-#    test_fn:
-#      _target_: src.utils.diagnostics
-#      _partial_: true
-#      test_domain:
-#        time: {_target_: builtins.slice, _args_: ["2021-02-09", "2021-06-30"]}
+
+#~ entrypoints:
+  #~ - _target_: pytorch_lightning.seed_everything
+    #~ seed: 333
+  #~ - _target_: src.train.base_training
+    #~ trainer: ${trainer}
+    #~ lit_mod: ${model}
+    #~ dm: ${datamodule}
+    #~ chkpt_path: 

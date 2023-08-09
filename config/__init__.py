@@ -1,5 +1,6 @@
 from hydra.core.config_store import ConfigStore
 from omegaconf import OmegaConf
+import pandas as pd
 
 OmegaConf.register_new_resolver(
     "_singleton",

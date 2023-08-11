@@ -240,23 +240,40 @@ class BaseDataModule(pl.LightningDataModule):
             lambda item: item._replace(input=normalize(item.input)),
         ])
 
-    # ~ def post_fn_rand(self):
-        # ~ m, s = self.norm_stats()
-        # ~ normalize = lambda item: (item - m) / s
-        # ~ return ft.partial(ft.reduce,lambda i, f: f(i), [
-            # ~ TrainingItem._make,
-            # ~ lambda item: item._replace(tgt=normalize(item.tgt)),
-            # ~ lambda item: item._replace(input=self.rand_obs(normalize(item.input))),
-        # ~ ])
+    def post_fn_rand(self):
+        m, s = self.norm_stats()
+        normalize = lambda item: (item - m) / s
+        return ft.partial(ft.reduce,lambda i, f: f(i), [
+            TrainingItem._make,
+            lambda item: item._replace(tgt=normalize(item.tgt)),
+            lambda item: item._replace(input=self.rand_obs(normalize(item.tgt))),
+        ])
         
-    # ~ def rand_obs(self, gt_item):
-        # ~ ###### ToDo
+    def rand_obs(self, gt_item):
+        obs_mask_item = ~np.isnan(gt_item)
+        _obs_item = gt_item
+        dtime = self.xrds_kw.patch_dims.time
+        dlat = self.xrds_kw.patch_dims.lat
+        dlon = self.xrds_kw.patch_dims.lon
+        for t_ in range(dtime):
+            obs_mask_item_t_ = obs_mask_item[t_]
+            if np.sum(obs_mask_item_t_)>.25*dlat*dlon:
+                obs_obj = .5*np.sum(obs_mask_item_t_)
+                while  np.sum(obs_mask_item_t_)>= obs_obj:
+                    half_patch_height = np.random.randint(2,10)
+                    half_patch_width = np.random.randint(2,10)
+                    idx_lat = np.random.randint(0,self.slice_win.lat)
+                    idx_lon = np.random.randint(0,self.slice_win.lon)
+                    obs_mask_item_t_[np.max([0,idx_lat-half_patch_height]):np.min([dlat,idx_lat+half_patch_height+1]),np.max([0,idx_lon-half_patch_width]):np.min([dlon,idx_lon+half_patch_width+1])] = 0
+                obs_mask_item[t_] = obs_mask_item_t_
+        obs_mask_item = obs_mask_item == 1
+        obs_item = np.where(obs_mask_item, _obs_item, 0)
 
     def setup(self, stage='test'):
         train_data = self.input_da.sel(self.domains['train'])
         post_fn = self.post_fn()
         self.train_ds = XrDataset(
-            train_data, **self.xrds_kw, postpro_fn=post_fn,
+            train_data, **self.xrds_kw, postpro_fn=post_fn_rand,
         )
         if self.aug_kw:
             self.train_ds = AugmentedDataset(self.train_ds, **self.aug_kw)

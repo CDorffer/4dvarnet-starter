@@ -36,16 +36,17 @@ datamodule:
     val: 
       time: {_target_: builtins.slice, _args_: ['2020-01-01', '2020-12-31']}
     test: 
-      time: 
-        _target_: builtins.slice
-        _args_: ${adjust_testslices:['2020-01-01', '2020-12-31']}
+      time: {_target_: builtins.slice, _args_: ['2020-01-01', '2020-12-31']}
+    #~ test: 
+      #~ time: 
+        #~ _target_: builtins.slice
+        #~ _args_: ['2020-01-01', '2020-12-31']
+        #~ _args_: ${adjust_testslices:['2020-01-01', '2020-12-31']}
         
   xrds_kw:
     patch_dims: { time: 7, lat: 240, lon: 240}
     strides: { time: 1, lat: 240, lon: 240}
   dl_kw: {batch_size: 8, num_workers: 1}
-  aug_factor: 0
-  aug_only: True
 
 model:
   _target_: src.models.Lit4dVarNet

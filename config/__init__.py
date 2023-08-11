@@ -17,13 +17,7 @@ OmegaConf.register_new_resolver(
 )
 
 OmegaConf.register_new_resolver(
-    "adjust_testslices", lambda x,y: [str((pd.to_datetime(x[0]) - pd.to_timedelta(f'{int(y)//2}D')).date()), str((pd.to_datetime(x[1]) + pd.to_timedelta(f'{1+int(y)//2}D')).date())], replace=True
-)
-OmegaConf.register_new_resolver(
-    "adjust_testslices2", lambda x: [str((pd.to_datetime(x[0]) - pd.to_timedelta(f'{int(7)//2}D')).date()), str((pd.to_datetime(x[1]) + pd.to_timedelta(f'{1+int(7)//2}D')).date())], replace=True
-)
-OmegaConf.register_new_resolver(
-    "adjust_testslices3", lambda x: ['2020-01-01', '2020-12-31'], replace=True
+    "adjust_testslices", lambda x: ['2020-01-01', '2020-12-31'], replace=True
 )
 
 class SingletonStore:

@@ -268,6 +268,7 @@ class BaseDataModule(pl.LightningDataModule):
                 obs_mask_item[t_] = obs_mask_item_t_
         obs_mask_item = obs_mask_item == 1
         obs_item = np.where(obs_mask_item, _obs_item, 0)
+        return(obs_item)
 
     def setup(self, stage='test'):
         train_data = self.input_da.sel(self.domains['train'])

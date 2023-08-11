@@ -272,8 +272,9 @@ class BaseDataModule(pl.LightningDataModule):
 
     def setup(self, stage='test'):
         train_data = self.input_da.sel(self.domains['train'])
+        post_fn_rand = self.post_fn_rand()
         self.train_ds = XrDataset(
-            train_data, **self.xrds_kw, postpro_fn=self.post_fn_rand,
+            train_data, **self.xrds_kw, postpro_fn=post_fn_rand,
         )
         if self.aug_kw:
             self.train_ds = AugmentedDataset(self.train_ds, **self.aug_kw)

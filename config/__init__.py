@@ -17,7 +17,7 @@ OmegaConf.register_new_resolver(
 )
 
 OmegaConf.register_new_resolver(
-    "adjust_testslices", lambda x: "2020-01-01","2020-02-01", replace=True
+    "adjust_testslices", lambda x: [str("2020-01-01")], replace=True
 )
 
 class SingletonStore:

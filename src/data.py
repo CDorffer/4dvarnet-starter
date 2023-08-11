@@ -262,8 +262,8 @@ class BaseDataModule(pl.LightningDataModule):
                 while  np.sum(obs_mask_item_t_)>= obs_obj:
                     half_patch_height = np.random.randint(2,10)
                     half_patch_width = np.random.randint(2,10)
-                    idx_lat = np.random.randint(0,self.slice_win.lat)
-                    idx_lon = np.random.randint(0,self.slice_win.lon)
+                    idx_lat = np.random.randint(0,dlat)
+                    idx_lon = np.random.randint(0,dlon)
                     obs_mask_item_t_[np.max([0,idx_lat-half_patch_height]):np.min([dlat,idx_lat+half_patch_height+1]),np.max([0,idx_lon-half_patch_width]):np.min([dlon,idx_lon+half_patch_width+1])] = 0
                 obs_mask_item[t_] = obs_mask_item_t_
         obs_mask_item = obs_mask_item == 1

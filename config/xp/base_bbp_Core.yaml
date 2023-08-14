@@ -34,9 +34,9 @@ datamodule:
     train:
       time: {_target_: builtins.slice, _args_: ['2018-01-01', '2019-12-31']}
     val: 
-      time: {_target_: builtins.slice, _args_: ['2020-01-01', '2020-12-31']}
+      time: {_target_: builtins.slice, _args_: ['2019-12-27', '2021-01-04']}
     test: 
-      time: {_target_: builtins.slice, _args_: ['2020-01-01', '2020-12-31']}
+      time: {_target_: builtins.slice, _args_: ['2019-12-27', '2021-01-04']}
     #~ test: 
       #~ time: 
         #~ _target_: builtins.slice

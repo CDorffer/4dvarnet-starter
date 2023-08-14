@@ -207,6 +207,22 @@ def load_kd_data (path1,path2):
         .to_array()
     )
     
+def load_chl_data (path1,path2):
+    GT=xr.open_dataset(path1)
+    patch=xr.open_dataset(path2)
+    GT = GT.rename({'CHL': 'GT'})
+    merg=xr.merge([GT,patch])
+    return (
+        merg
+        .load()
+        .assign(
+            input=lambda ds: ds.bbp443,
+            tgt=lambda ds: ds.GT,
+        )[[*src.data.TrainingItem._fields]]
+        .transpose("time", "lat", "lon")
+        .to_array()
+    )
+    
 def load_spm_data (path1,path2):
     GT=xr.open_dataset(path1)
     patch=xr.open_dataset(path2)

@@ -20,7 +20,8 @@ OmegaConf.register_new_resolver(
     "adjust_testslices", lambda x,y:
         [str((pd.to_datetime(x[0]) - pd.to_timedelta(f'{int(y)//2}D')).date()),
          str((pd.to_datetime(x[1]) + pd.to_timedelta(f'{1+int(y)//2}D')).date())],
-        replace=True)
+        replace=True
+)
 
 class SingletonStore:
     STORE = dict()

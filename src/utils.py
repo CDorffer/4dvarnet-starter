@@ -175,6 +175,22 @@ def load_altimetry_data(path, obs_from_tgt=False):
         .to_array()
     )
 
+def load_turbidity_data (path1,path2,var):
+    GT=xr.open_dataset(path1)
+    patch=xr.open_dataset(path2)
+    GT = GT.rename({var: 'GT'})
+    merg=xr.merge([GT,patch])
+    return (
+        merg
+        .load()
+        .assign(
+            input=lambda ds: ds[var],
+            tgt=lambda ds: ds.GT,
+        )[[*src.data.TrainingItem._fields]]
+        .transpose("time", "lat", "lon")
+        .to_array()
+    )
+    
 def load_bbp_data (path1,path2):
     GT=xr.open_dataset(path1)
     patch=xr.open_dataset(path2)

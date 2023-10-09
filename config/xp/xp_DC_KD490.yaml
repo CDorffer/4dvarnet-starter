@@ -3,6 +3,7 @@
 paths:
     GT: /DATASET/turbidity_new/kd/GT_2010to2021_log10.nc
     patch: /DATASET/turbidity_new/kd/Obs_patch_2010to2021_log10.nc
+    #patch: /DATASET/turbidity_new/kd/GT_2010to2021_log10.nc
 
 trainer:
   _target_: pytorch_lightning.Trainer
@@ -37,7 +38,7 @@ datamodule:
     val: 
       time: {_target_: builtins.slice, _args_: ['2019-01-01', '2019-12-31']}
     test: 
-      time: {_target_: builtins.slice, _args_: ['2020-01-01', '2021-12-31']}
+      time: {_target_: builtins.slice, _args_: ['2020-01-01', '2020-01-31']}
     #~ test: 
       #~ time: 
         #~ _target_: builtins.slice, _args_: ${adjust_testslices:['2020-01-01', '2021-12-31']}
@@ -77,6 +78,7 @@ model:
       dim_hidden: 150
       dropout: .25
 
+
 entrypoints:
   - _target_: pytorch_lightning.seed_everything
     seed: 333
@@ -84,3 +86,14 @@ entrypoints:
     trainer: ${trainer}
     lit_mod: ${model}
     dm: ${datamodule}
+
+
+
+#entrypoints:
+#  - _target_: pytorch_lightning.seed_everything
+#    seed: 333
+#  - _target_: src.test.base_test
+#    trainer: ${trainer}
+#    lit_mod: ${model}
+#    dm: ${datamodule}
+#    ckpt_path: "outputs/2023-10-04/10-01-34/xp_DC_KD490/checkpoints/val_mse=1.8400-epoch=096.ckpt"
